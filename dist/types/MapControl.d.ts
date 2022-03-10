@@ -1,6 +1,5 @@
-import { MapControlParams } from "./MapControlParams";
-export type { MapControlParams } from "./MapControlParams";
-import "@arcgis/core/assets/esri/themes/light/main.css";
+import { MapControlParams } from './MapControlParams';
+export type { MapControlParams } from './MapControlParams';
 export declare class MapControl {
     private view;
     /**
@@ -9,9 +8,9 @@ export declare class MapControl {
     constructor(params: MapControlParams);
     /**
      * Centre la carte sur un nouvel emplacement
-     * @param  {number} x Coordonnée X du nouveau centre
-     * @param  {number} y Coordonnée Y du nouveau centre
-     * @param  {number} scale Echelle
+     * @param x Coordonnée X du nouveau centre
+     * @param y Coordonnée Y du nouveau centre
+     * @param scale Echelle
      * @returns void
      */
     center(x: number, y: number, scale?: number): void;

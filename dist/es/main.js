@@ -4,19 +4,23 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import Map from "@arcgis/core/Map";
-import MapView from "@arcgis/core/views/MapView";
-import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
+import esriConfig from "@arcgis/core/config";
+import Extent from "@arcgis/core/geometry/Extent";
 import Point from "@arcgis/core/geometry/Point";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 import TileInfo from "@arcgis/core/layers/support/TileInfo";
-import Extent from "@arcgis/core/geometry/Extent";
-import esriConfig from "@arcgis/core/config";
-import "@arcgis/core/assets/esri/themes/light/main.css";
+import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
+import Map from "@arcgis/core/Map";
+import MapView from "@arcgis/core/views/MapView";
 esriConfig.assetsPath = "https://js.arcgis.com/4.22/@arcgis/core/assets";
 class MapControl {
   constructor(params) {
     __publicField(this, "view");
+    const css = document.createElement("link");
+    css.setAttribute("rel", "stylesheet");
+    css.setAttribute("type", "text/css");
+    css.setAttribute("href", "https://js.arcgis.com/4.22/@arcgis/core/assets/esri/themes/light/main.css");
+    document.getElementsByTagName("head")[0].appendChild(css);
     this.build(params);
   }
   center(x, y, scale) {
@@ -56,7 +60,38 @@ class MapControl {
         spatialReference
       });
     }
-    const scales = [15118110236220477e-9, 14173228346456695e-9, 13228346456692917e-9, 12283464566929135e-9, 11338582677165356e-9, 10393700787401576e-9, 9448818897637796e-9, 8503937007874018e-9, 7559055118110239e-9, 6614173228346459e-9, 5669291338582678e-9, 4724409448818898e-9, 3.7795275590551193e6, 2834645669291339e-9, 2.4566929133858276e6, 1.8897637795275596e6, 944881.8897637798, 377952.7559055118, 188976.3779527559, 75590.55118110238, 37795.27559055119, 18897.637795275594, 9448.818897637797, 7559.055118110236, 5669.291338582678, 3779.527559055118, 1889.763779527559, 944.8818897637796, 377.9527559055119, 188.97637795275594];
+    const scales = [
+      15118110236220477e-9,
+      14173228346456695e-9,
+      13228346456692917e-9,
+      12283464566929135e-9,
+      11338582677165356e-9,
+      10393700787401576e-9,
+      9448818897637796e-9,
+      8503937007874018e-9,
+      7559055118110239e-9,
+      6614173228346459e-9,
+      5669291338582678e-9,
+      4724409448818898e-9,
+      3.7795275590551193e6,
+      2834645669291339e-9,
+      2.4566929133858276e6,
+      1.8897637795275596e6,
+      944881.8897637798,
+      377952.7559055118,
+      188976.3779527559,
+      75590.55118110238,
+      37795.27559055119,
+      18897.637795275594,
+      9448.818897637797,
+      7559.055118110236,
+      5669.291338582678,
+      3779.527559055118,
+      1889.763779527559,
+      944.8818897637796,
+      377.9527559055119,
+      188.97637795275594
+    ];
     const tileInfo = TileInfo.create({
       spatialReference,
       numLODs: scales.length,
