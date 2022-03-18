@@ -16,7 +16,7 @@ npm install tt-mapcontrol
 
 - Importer la classe `MapControl`:
 ```sh
-import { MapControl } from 'tt-mapcontrol';
+import MapControl from 'tt-mapcontrol';
 ```
 
 - Créer un instance de `MapControl`:
@@ -38,14 +38,14 @@ Les deux paramètres obligatoires sont `configUrl` et `container`.
 
 - Faire un `require` pour charger la librairie:
 ```sh
-require(['http://localhost:5500/node_modules/tt-mapcontrol/dist/umd/main.js'], function (tt_mapcontrol) {
+require(['http://localhost:5500/node_modules/tt-mapcontrol/dist/umd/main.js'], function (MapControl) {
     // initialisation de la carte
 });
 ```
 
 - Créer un instance de `MapControl`:
 ```sh
-const mapControl = new tt_mapcontrol.MapControl({
+const mapControl = new MapControl({
     configUrl: 'http://localhost:5500/config/config.json',
     container: 'viewDiv'
 });
