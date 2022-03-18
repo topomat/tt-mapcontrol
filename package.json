@@ -1,17 +1,26 @@
 {
-  "name": "tt-mapcontrol",
-  "version": "0.2.1",
-  "description": "",
-  "main": "./dist/umd/MapControl.js",
-  "module": "./dist/es/main.js",
-  "types": "./dist/types/MapControl.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/topomat/tt-mapcontrol"
-  },
-  "dependencies": {
-    "@arcgis/core": "~4.22.0"
-  },
-  "author": "Topomat",
-  "license": ""
+    "name": "tt-mapcontrol",
+    "version": "0.9.0",
+    "description": "This package allows to add small maps on a page.",
+    "main": "./dist/umd/main.js",
+    "module": "./dist/es/main.js",
+    "types": "./dist/types/MapControl.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/topomat/mapcontrol"
+    },
+    "dependencies": {
+        "@arcgis/core": "^4.22.0"
+    },
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "import": "./dist/es/main.js",
+            "require": "./dist/umd/main.js"
+        }
+    },
+    "author": "Topomat",
+    "license": ""
 }
