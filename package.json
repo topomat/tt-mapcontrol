@@ -7,7 +7,7 @@
     "types": "./dist/types/MapControl.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/topomat/mapcontrol"
+        "url": "https://github.com/topomat/tt-mapcontrol"
     },
     "dependencies": {
         "@arcgis/core": "^4.22.0"
