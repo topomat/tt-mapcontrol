@@ -18,6 +18,9 @@ import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import TileLayer from "@arcgis/core/layers/TileLayer";
 import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
 import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
+import { property } from "@arcgis/core/core/accessorSupport/decorators/property";
+import { subclass } from "@arcgis/core/core/accessorSupport/decorators/subclass";
+import BaseTileLayer from "@arcgis/core/layers/BaseTileLayer";
 import * as query from "@arcgis/core/rest/query";
 import PictureMarkerSymbol from "@arcgis/core/symbols/PictureMarkerSymbol";
 import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
@@ -27,7 +30,7 @@ import Conversion from "@arcgis/core/widgets/CoordinateConversion/support/Conver
 import Format from "@arcgis/core/widgets/CoordinateConversion/support/Format";
 import Expand from "@arcgis/core/widgets/Expand";
 import LayerList from "@arcgis/core/widgets/LayerList";
-import { property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+import { property as property$1, subclass as subclass$1 } from "@arcgis/core/core/accessorSupport/decorators";
 import { init } from "@arcgis/core/core/watchUtils";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
@@ -109,13 +112,57 @@ class GpxUtils {
     });
   }
 }
+var __defProp$1 = Object.defineProperty;
+var __getOwnPropDesc$1 = Object.getOwnPropertyDescriptor;
+var __decorateClass$1 = (decorators, target, key, kind) => {
+  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc$1(target, key) : target;
+  for (var i = decorators.length - 1, decorator; i >= 0; i--)
+    if (decorator = decorators[i])
+      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
+  if (kind && result)
+    __defProp$1(target, key, result);
+  return result;
+};
+let SwissTileLayer = class extends BaseTileLayer {
+  constructor(params) {
+    super();
+    const spatialReference = new SpatialReference({
+      wkid: 2056
+    });
+    const tileInfo = TileInfo.create({
+      spatialReference,
+      numLODs: params.scales.length,
+      scales: params.scales
+    });
+    tileInfo.origin = new Point({
+      x: 242e4,
+      y: 135e4,
+      spatialReference
+    });
+    this.title = params.title;
+    this.urlTemplate = params.urlTemplate;
+    this.spatialReference = spatialReference;
+    this.tileInfo = tileInfo;
+  }
+  getTileUrl(level, row, col) {
+    return this.urlTemplate.replace("{level}", level.toString()).replace("{col}", col.toString()).replace("{row}", row.toString());
+  }
+};
+__decorateClass$1([
+  property()
+], SwissTileLayer.prototype, "urlTemplate", 2);
+SwissTileLayer = __decorateClass$1([
+  subclass("esri.layers.SwissTileLayer")
+], SwissTileLayer);
 class LayerUtils {
-  constructor(serviceUrl, token) {
-    this.serviceUrl = serviceUrl;
+  constructor(config) {
     this.serviceDescription = null;
+    this.config = config;
+    this.serviceUrl = config.vectorServiceUrl;
+    const token = config.vectorServiceToken;
     esriId.registerToken({
       token,
-      server: `${serviceUrl.split("/rest/services")[0]}/rest/services`
+      server: `${this.serviceUrl.split("/rest/services")[0]}/rest/services`
     });
   }
   getFeatureLayers(layers) {
@@ -190,6 +237,12 @@ class LayerUtils {
   }
   getLayer(params) {
     switch (params.type) {
+      case "tile":
+        return new SwissTileLayer({
+          title: params.alias,
+          urlTemplate: params.urlTemplate,
+          scales: this.config.scales
+        });
       case "wmts":
         return new WMTSLayer({
           url: params.url,
@@ -363,10 +416,10 @@ let Overview = class extends Widget {
   }
 };
 __decorateClass([
-  property()
+  property$1()
 ], Overview.prototype, "expand", 2);
 Overview = __decorateClass([
-  subclass("esri.widgets.Overview")
+  subclass$1("esri.widgets.Overview")
 ], Overview);
 class WidgetUtils {
   static addOverview(basemap, view, scales, factor, display) {
@@ -468,7 +521,7 @@ class WidgetUtils {
 class MapClass {
   constructor(config) {
     this.config = config;
-    this.layerUtils = new LayerUtils(config.vectorServiceUrl, config.vectorServiceToken);
+    this.layerUtils = new LayerUtils(config);
   }
   init(emitter) {
     const basemaps = this.layerUtils.getBasemaps(this.config.basemaps);
@@ -519,7 +572,9 @@ class MapClass {
         }
       }
     });
-    this.view.when(() => emitter.emit("map-created"));
+    this.view.when(() => {
+      emitter.emit("map-created");
+    });
     const scaleBar = new ScaleBar({
       view: this.view,
       unit: "metric"
@@ -787,7 +842,8 @@ class ConfigUtils {
       name,
       thumbnailUrl: basemap.thumbnailUrl,
       type: basemap.type,
-      url: basemap.url
+      url: basemap.url,
+      urlTemplate: basemap.urlTemplate
     };
   }
 }

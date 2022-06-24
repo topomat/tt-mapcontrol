@@ -100,7 +100,7 @@ Le fichier de configuration est au format json et possède les propriétés déc
 - **globalExtent**: Etendue maximale de la carte sur laquelle il est possible de se déplacer.
 - **minScale**: Echelle minimale de la carte. 0 pour ne pas fixer de limite.
 - **maxScale**: Echelle maximale de la carte. 0 pour ne pas fixer de limite.
-- **basemaps**: Liste des fonds de plan disponibles. Les formats supportés sont `wmts`, `mapservice` (tuilé), `imageservice` et `vectortile`.
+- **basemaps**: Liste des fonds de plan disponibles. Les formats supportés sont `tile` (service tuilé dans projection 2056 avec urlTemplate), `wmts`, `mapservice` (tuilé), `imageservice` et `vectortile`.
 - **defaultBasemap**: Fond de plan utilisé si le constructeur de MapControl ne possède pas la propriété `basemaps`.
 - **vectorServiceUrl**: Url du service ArcGIS Server contenant les couches vectorielles.
 - **vectorServiceToken**: Token permettant d'accéder au service défini sous `vectorServiceUrl` si celui-ci est sécurisé. 

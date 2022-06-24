@@ -1,6 +1,6 @@
 {
     "name": "tt-mapcontrol",
-    "version": "0.9.1",
+    "version": "1.0.1",
     "description": "This package allows to add small maps on a page.",
     "main": "./dist/umd/main.js",
     "module": "./dist/es/main.js",
@@ -10,7 +10,7 @@
         "url": "https://github.com/topomat/tt-mapcontrol"
     },
     "dependencies": {
-        "@arcgis/core": "^4.22.0"
+        "@arcgis/core": "^4.23.7"
     },
     "files": [
         "dist"

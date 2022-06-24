@@ -11,7 +11,8 @@ export declare type BasemapItem = {
     name: string;
     thumbnailUrl: string;
     type: string;
-    url: string;
+    url?: string;
+    urlTemplate?: string;
 };
 export declare type LayerQueryItem = {
     layer: string;
