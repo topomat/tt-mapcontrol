@@ -10,7 +10,7 @@
         "url": "https://github.com/topomat/tt-mapcontrol"
     },
     "dependencies": {
-        "@arcgis/core": "^4.23.7"
+        "@arcgis/core": "^4.24.1"
     },
     "files": [
         "dist"
