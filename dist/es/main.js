@@ -37,11 +37,18 @@ import Widget from "@arcgis/core/widgets/Widget";
 let createNanoEvents = () => ({
   events: {},
   emit(event, ...args) {
-    (this.events[event] || []).forEach((i) => i(...args));
+    let callbacks = this.events[event] || [];
+    for (let i = 0, length = callbacks.length; i < length; i++) {
+      callbacks[i](...args);
+    }
   },
   on(event, cb) {
-    (this.events[event] = this.events[event] || []).push(cb);
-    return () => this.events[event] = (this.events[event] || []).filter((i) => i !== cb);
+    var _a;
+    ((_a = this.events[event]) == null ? void 0 : _a.push(cb)) || (this.events[event] = [cb]);
+    return () => {
+      var _a2;
+      this.events[event] = (_a2 = this.events[event]) == null ? void 0 : _a2.filter((i) => cb !== i);
+    };
   }
 });
 class GpxUtils {
@@ -584,7 +591,7 @@ class MapClass {
     });
     if (this.config.layers) {
       this.layerUtils.getFeatureLayers(this.config.layers).then((layers) => {
-        this.view.map.addMany(layers);
+        this.view.map.addMany(layers.reverse());
       });
     }
     if (basemaps.length > 1) {
