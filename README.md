@@ -33,7 +33,7 @@ Les deux paramètres obligatoires sont `configUrl` et `container`.
 
 - Ajouter un tag script pour charger l'API JavaScript Esri:
 ```sh
-<script src="https://js.arcgis.com/4.23/"></script>
+<script src="https://js.arcgis.com/4.27/"></script>
 ```
 
 - Faire un `require` pour charger la librairie:

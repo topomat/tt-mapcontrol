@@ -1,398 +1,345 @@
-import esriConfig from "@arcgis/core/config";
-import Extent from "@arcgis/core/geometry/Extent";
-import Point from "@arcgis/core/geometry/Point";
-import SpatialReference from "@arcgis/core/geometry/SpatialReference";
-import Graphic from "@arcgis/core/Graphic";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-import TileInfo from "@arcgis/core/layers/support/TileInfo";
-import Map from "@arcgis/core/Map";
-import MapView from "@arcgis/core/views/MapView";
-import ScaleBar from "@arcgis/core/widgets/ScaleBar";
-import Polyline from "@arcgis/core/geometry/Polyline";
-import * as projection from "@arcgis/core/geometry/projection";
-import esriRequest from "@arcgis/core/request";
-import Basemap from "@arcgis/core/Basemap";
-import esriId from "@arcgis/core/identity/IdentityManager";
-import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
-import TileLayer from "@arcgis/core/layers/TileLayer";
-import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
-import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
-import { property } from "@arcgis/core/core/accessorSupport/decorators/property";
-import { subclass } from "@arcgis/core/core/accessorSupport/decorators/subclass";
-import BaseTileLayer from "@arcgis/core/layers/BaseTileLayer";
-import * as query from "@arcgis/core/rest/query";
-import PictureMarkerSymbol from "@arcgis/core/symbols/PictureMarkerSymbol";
-import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
-import LocalBasemapsSource from "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource";
-import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
-import Conversion from "@arcgis/core/widgets/CoordinateConversion/support/Conversion";
-import Format from "@arcgis/core/widgets/CoordinateConversion/support/Format";
-import Expand from "@arcgis/core/widgets/Expand";
-import LayerList from "@arcgis/core/widgets/LayerList";
-import { property as property$1, subclass as subclass$1 } from "@arcgis/core/core/accessorSupport/decorators";
-import { init } from "@arcgis/core/core/watchUtils";
-import { tsx } from "@arcgis/core/widgets/support/widget";
-import Widget from "@arcgis/core/widgets/Widget";
-let createNanoEvents = () => ({
-  events: {},
-  emit(event, ...args) {
-    let callbacks = this.events[event] || [];
-    for (let i = 0, length = callbacks.length; i < length; i++) {
-      callbacks[i](...args);
-    }
+import G from "@arcgis/core/config";
+import L from "@arcgis/core/geometry/Extent";
+import d from "@arcgis/core/geometry/Point";
+import T from "@arcgis/core/geometry/SpatialReference";
+import y from "@arcgis/core/Graphic";
+import k from "@arcgis/core/layers/GraphicsLayer";
+import x from "@arcgis/core/layers/support/TileInfo";
+import C from "@arcgis/core/Map";
+import U from "@arcgis/core/views/MapView";
+import I from "@arcgis/core/widgets/ScaleBar";
+import P from "@arcgis/core/geometry/Polyline";
+import * as E from "@arcgis/core/geometry/projection";
+import b from "@arcgis/core/request";
+import O from "@arcgis/core/Basemap";
+import R from "@arcgis/core/identity/IdentityManager";
+import D from "@arcgis/core/layers/FeatureLayer";
+import V from "@arcgis/core/layers/ImageryLayer";
+import F from "@arcgis/core/layers/MapImageLayer";
+import A from "@arcgis/core/layers/TileLayer";
+import q from "@arcgis/core/layers/VectorTileLayer";
+import _ from "@arcgis/core/layers/WMTSLayer";
+import { property as j } from "@arcgis/core/core/accessorSupport/decorators/property";
+import { subclass as N } from "@arcgis/core/core/accessorSupport/decorators/subclass";
+import z from "@arcgis/core/layers/BaseTileLayer";
+import * as W from "@arcgis/core/rest/query";
+import J from "@arcgis/core/symbols/PictureMarkerSymbol";
+import K from "@arcgis/core/widgets/BasemapGallery";
+import Q from "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource";
+import H from "@arcgis/core/widgets/CoordinateConversion";
+import X from "@arcgis/core/widgets/CoordinateConversion/support/Conversion";
+import Y from "@arcgis/core/widgets/CoordinateConversion/support/Format";
+import f from "@arcgis/core/widgets/Expand";
+import Z from "@arcgis/core/widgets/LayerList";
+import { property as ee, subclass as te } from "@arcgis/core/core/accessorSupport/decorators";
+import * as ie from "@arcgis/core/core/reactiveUtils";
+import { tsx as se } from "@arcgis/core/widgets/support/widget";
+import oe from "@arcgis/core/widgets/Widget";
+let re = () => ({
+  emit(c, ...e) {
+    let t = this.events[c] || [];
+    for (let s = 0, i = t.length; s < i; s++)
+      t[s](...e);
   },
-  on(event, cb) {
-    var _a;
-    ((_a = this.events[event]) == null ? void 0 : _a.push(cb)) || (this.events[event] = [cb]);
-    return () => {
-      var _a2;
-      this.events[event] = (_a2 = this.events[event]) == null ? void 0 : _a2.filter((i) => cb !== i);
+  events: {},
+  on(c, e) {
+    var t;
+    return (t = this.events[c]) != null && t.push(e) || (this.events[c] = [e]), () => {
+      var s;
+      this.events[c] = (s = this.events[c]) == null ? void 0 : s.filter((i) => e !== i);
     };
   }
 });
-class GpxUtils {
-  static gpxToFeatures(url, spatialReference) {
-    return new Promise((resolve) => {
-      esriRequest(url, {
+class ne {
+  static gpxToFeatures(e, t) {
+    return new Promise((s) => {
+      b(e, {
         responseType: "xml"
-      }).then((r) => {
-        const xml = r.data;
-        projection.load().then(() => {
-          const result = {
+      }).then((i) => {
+        const o = i.data;
+        E.load().then(() => {
+          const r = {
             waypoints: [],
             tracks: []
           };
-          xml.querySelectorAll("wpt").forEach((waypoint, i) => {
-            const wPt = new Point({ latitude: waypoint.attributes.lat.value, longitude: waypoint.attributes.lon.value });
-            const gr = this.getGraphic(wPt, waypoint, `waypoint ${i + 1}`, spatialReference);
-            result.waypoints.push(gr);
-          });
-          xml.querySelectorAll("trk").forEach((track, i) => {
-            const polyline = new Polyline({ paths: [], spatialReference: { wkid: 4326 } });
-            track.querySelectorAll("trkseg").forEach((segment) => {
-              const path = [];
-              const points = segment.querySelectorAll("trkpt");
-              points.forEach((point) => {
-                const pt = new Point({ latitude: point.attributes.lat.value, longitude: point.attributes.lon.value });
-                path.push(pt);
-              });
-              polyline.addPath(path);
+          o.querySelectorAll("wpt").forEach((n, a) => {
+            const l = new d({ latitude: n.attributes.lat.value, longitude: n.attributes.lon.value }), p = this.getGraphic(l, n, `waypoint ${a + 1}`, t);
+            r.waypoints.push(p);
+          }), o.querySelectorAll("trk").forEach((n, a) => {
+            const l = new P({ paths: [], spatialReference: { wkid: 4326 } });
+            n.querySelectorAll("trkseg").forEach((h) => {
+              const m = [];
+              h.querySelectorAll("trkpt").forEach((S) => {
+                const B = new d({ latitude: S.attributes.lat.value, longitude: S.attributes.lon.value });
+                m.push(B);
+              }), l.addPath(m);
             });
-            const gr = this.getGraphic(polyline, track, `track ${i + 1}`, spatialReference);
-            result.tracks.push(gr);
-          });
-          xml.querySelectorAll("rte").forEach((route, i) => {
-            const polyline = new Polyline({ paths: [], spatialReference: { wkid: 4326 } });
-            const path = [];
-            route.querySelectorAll("rtept").forEach((point) => {
-              const pt = new Point({ latitude: point.attributes.lat.value, longitude: point.attributes.lon.value });
-              path.push(pt);
-            });
-            polyline.addPath(path);
-            const gr = this.getGraphic(polyline, route, `route ${i + 1}`, spatialReference);
-            result.tracks.push(gr);
-          });
-          resolve(result);
+            const p = this.getGraphic(l, n, `track ${a + 1}`, t);
+            r.tracks.push(p);
+          }), o.querySelectorAll("rte").forEach((n, a) => {
+            const l = new P({ paths: [], spatialReference: { wkid: 4326 } }), p = [];
+            n.querySelectorAll("rtept").forEach((m) => {
+              const u = new d({ latitude: m.attributes.lat.value, longitude: m.attributes.lon.value });
+              p.push(u);
+            }), l.addPath(p);
+            const h = this.getGraphic(l, n, `route ${a + 1}`, t);
+            r.tracks.push(h);
+          }), s(r);
         });
       });
     });
   }
-  static getGraphic(geom, node, defaultName, spatialReference) {
-    const n = node.querySelector("name");
-    let name = defaultName;
-    if (n) {
-      name = n.textContent;
-    }
-    const d = node.querySelector("desc");
-    let description = "";
-    if (d) {
-      description = d.textContent;
-    }
-    const popupTemplate = {
-      title: name,
-      content: description
+  static getGraphic(e, t, s, i) {
+    const o = t.querySelector("name");
+    let r = s;
+    o && (r = o.textContent);
+    const n = t.querySelector("desc");
+    let a = "";
+    n && (a = n.textContent);
+    const l = {
+      title: r,
+      content: a
     };
-    return new Graphic({
-      geometry: projection.project(geom, spatialReference),
-      popupTemplate
+    return new y({
+      geometry: E.project(e, i),
+      popupTemplate: l
     });
   }
 }
-var __defProp$1 = Object.defineProperty;
-var __getOwnPropDesc$1 = Object.getOwnPropertyDescriptor;
-var __decorateClass$1 = (decorators, target, key, kind) => {
-  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc$1(target, key) : target;
-  for (var i = decorators.length - 1, decorator; i >= 0; i--)
-    if (decorator = decorators[i])
-      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
-  if (kind && result)
-    __defProp$1(target, key, result);
-  return result;
+var ae = Object.defineProperty, le = Object.getOwnPropertyDescriptor, $ = (c, e, t, s) => {
+  for (var i = s > 1 ? void 0 : s ? le(e, t) : e, o = c.length - 1, r; o >= 0; o--)
+    (r = c[o]) && (i = (s ? r(e, t, i) : r(i)) || i);
+  return s && i && ae(e, t, i), i;
 };
-let SwissTileLayer = class extends BaseTileLayer {
-  constructor(params) {
+let w = class extends z {
+  constructor(c) {
     super();
-    const spatialReference = new SpatialReference({
+    const e = new T({
       wkid: 2056
+    }), t = x.create({
+      spatialReference: e,
+      numLODs: c.scales.length,
+      scales: c.scales
     });
-    const tileInfo = TileInfo.create({
-      spatialReference,
-      numLODs: params.scales.length,
-      scales: params.scales
-    });
-    tileInfo.origin = new Point({
+    t.origin = new d({
       x: 242e4,
       y: 135e4,
-      spatialReference
-    });
-    this.title = params.title;
-    this.urlTemplate = params.urlTemplate;
-    this.spatialReference = spatialReference;
-    this.tileInfo = tileInfo;
+      spatialReference: e
+    }), this.title = c.title, this.urlTemplate = c.urlTemplate, this.spatialReference = e, this.tileInfo = t;
   }
-  getTileUrl(level, row, col) {
-    return this.urlTemplate.replace("{level}", level.toString()).replace("{col}", col.toString()).replace("{row}", row.toString());
+  getTileUrl(c, e, t) {
+    return this.urlTemplate.replace("{level}", c.toString()).replace("{col}", t.toString()).replace("{row}", e.toString());
   }
 };
-__decorateClass$1([
-  property()
-], SwissTileLayer.prototype, "urlTemplate", 2);
-SwissTileLayer = __decorateClass$1([
-  subclass("esri.layers.SwissTileLayer")
-], SwissTileLayer);
-class LayerUtils {
-  constructor(config) {
-    this.serviceDescription = null;
-    this.config = config;
-    this.serviceUrl = config.vectorServiceUrl;
-    const token = config.vectorServiceToken;
-    esriId.registerToken({
-      token,
+$([
+  j()
+], w.prototype, "urlTemplate", 2);
+w = $([
+  N("esri.layers.SwissTileLayer")
+], w);
+class ce {
+  constructor(e) {
+    this.serviceDescription = null, this.config = e, this.serviceUrl = e.vectorServiceUrl;
+    const t = e.vectorServiceToken;
+    R.registerToken({
+      token: t,
       server: `${this.serviceUrl.split("/rest/services")[0]}/rest/services`
     });
   }
-  getFeatureLayers(layers) {
-    return new Promise((resolve) => {
-      this.getServiceDescription().then((r) => {
-        const featureLayers = [];
-        r.layers.forEach((l) => {
-          if (layers.includes(l.name)) {
-            const featureLayer = new FeatureLayer({
-              url: `${this.serviceUrl}/${l.id}`,
-              title: l.name
+  getFeatureLayers(e) {
+    return new Promise((t) => {
+      this.getServiceDescription().then((s) => {
+        const i = [];
+        s.layers.forEach((o) => {
+          if (e.includes(o.name)) {
+            const r = new D({
+              url: `${this.serviceUrl}/${o.id}`,
+              title: o.name
             });
-            featureLayer.on("layerview-create", (e) => {
-              const fLayer = e.layerView.layer;
-              fLayer.popupTemplate = fLayer.createPopupTemplate();
-            });
-            featureLayers.push(featureLayer);
+            r.on("layerview-create", (n) => {
+              const a = n.layerView.layer;
+              a.popupTemplate = a.createPopupTemplate();
+            }), i.push(r);
           }
-        });
-        resolve(featureLayers);
+        }), t(i);
       });
     });
   }
-  queryLayer(layerQuery, ids) {
-    return new Promise((resolve) => {
-      this.getServiceDescription().then((r) => {
-        const layerInfo = r.layers.filter((l) => l.name === layerQuery.layer)[0];
-        if (!layerInfo) {
-          console.warn(`Invalid layer name in config file: ${layerQuery.layer}`);
-          resolve([]);
+  async getMapImageLayers(e) {
+    const t = [];
+    return (await this.getServiceDescription()).layers.forEach((i) => {
+      if (e.includes(i.name)) {
+        const o = new F({
+          title: i.name,
+          url: this.serviceUrl,
+          listMode: "hide-children",
+          sublayers: [{
+            id: i.id,
+            visible: !0
+          }]
+        }), r = o.sublayers.at(0);
+        r.load().then(() => {
+          r.popupEnabled = !0, r.popupTemplate = r.createPopupTemplate(), r.popupTemplate.title = `${i.name}: {${r.sourceJSON.displayField}}`;
+        }), t.push(o);
+      }
+    }), t;
+  }
+  queryLayer(e, t) {
+    return new Promise((s) => {
+      this.getServiceDescription().then((i) => {
+        const o = i.layers.filter((r) => r.name === e.layer)[0];
+        if (!o) {
+          console.warn(`Invalid layer name in config file: ${e.layer}`), s([]);
           return;
         }
-        query.executeQueryJSON(`${this.serviceUrl}/${layerInfo.id}`, {
-          where: `${layerQuery.field} in ('${ids.join("','")}')`,
-          returnGeometry: true
-        }).then((r2) => {
-          resolve(r2.features.map((f) => f.geometry));
+        W.executeQueryJSON(`${this.serviceUrl}/${o.id}`, {
+          where: `${e.field} in ('${t.join("','")}')`,
+          returnGeometry: !0
+        }).then((r) => {
+          s(r.features.map((n) => n.geometry));
         });
       });
     });
   }
-  getBasemaps(basemapItems) {
-    const result = [];
-    basemapItems.forEach((item) => {
-      const layer = this.getLayer(item);
-      if (layer) {
-        result.push(new Basemap({
-          baseLayers: [layer],
-          title: item.alias,
-          thumbnailUrl: item.thumbnailUrl
-        }));
-      }
-    });
-    return result;
+  getBasemaps(e) {
+    const t = [];
+    return e.forEach((s) => {
+      const i = this.getLayer(s);
+      i && t.push(new O({
+        baseLayers: [i],
+        title: s.alias,
+        thumbnailUrl: s.thumbnailUrl
+      }));
+    }), t;
   }
   getServiceDescription() {
-    return new Promise((resolve) => {
-      if (this.serviceDescription === null) {
-        esriRequest(this.serviceUrl, {
-          query: {
-            f: "json"
-          },
-          responseType: "json"
-        }).then((r) => {
-          this.serviceDescription = r.data;
-          resolve(this.serviceDescription);
-        });
-      } else {
-        resolve(this.serviceDescription);
-      }
+    return new Promise((e) => {
+      this.serviceDescription === null ? b(this.serviceUrl, {
+        query: {
+          f: "json"
+        },
+        responseType: "json"
+      }).then((t) => {
+        this.serviceDescription = t.data, e(this.serviceDescription);
+      }) : e(this.serviceDescription);
     });
   }
-  getLayer(params) {
-    switch (params.type) {
+  getLayer(e) {
+    switch (e.type) {
       case "tile":
-        return new SwissTileLayer({
-          title: params.alias,
-          urlTemplate: params.urlTemplate,
+        return new w({
+          title: e.alias,
+          urlTemplate: e.urlTemplate,
           scales: this.config.scales
         });
       case "wmts":
-        return new WMTSLayer({
-          url: params.url,
+        return new _({
+          url: e.url,
           activeLayer: {
-            id: params.layerId
+            id: e.layerId
           },
-          copyright: params.copyright
+          copyright: e.copyright
         });
       case "mapservice":
-        return new TileLayer({
-          url: params.url,
-          copyright: params.copyright
+        return new A({
+          url: e.url,
+          copyright: e.copyright
         });
       case "imageservice":
-        return new ImageryLayer({
-          url: params.url,
-          copyright: params.copyright
+        return new V({
+          url: e.url,
+          copyright: e.copyright
         });
       case "vectortile":
-        return new VectorTileLayer({
-          url: params.url
+        return new q({
+          url: e.url
         });
       default:
-        console.warn(`Unsupported basemap type: ${params.type}`);
-        return null;
+        return console.warn(`Unsupported basemap type: ${e.type}`), null;
     }
   }
 }
-class TextUtils {
-  static txtToFeatures(url, spatialReference) {
-    return new Promise((resolve) => {
-      esriRequest(url, {
+class pe {
+  static txtToFeatures(e, t) {
+    return new Promise((s) => {
+      b(e, {
         responseType: "text"
-      }).then((r) => {
-        const graphics = [];
-        r.data.split("\n").forEach((row, index) => {
-          if (index) {
-            const parts = row.split("	");
-            if (parts.length >= 5) {
-              const coords = parts[0].split(",");
-              const geometry = new Point({ x: parseFloat(coords[1]), y: parseFloat(coords[0]), spatialReference });
-              const popupTemplate = {
-                title: parts[1],
-                content: parts[2]
-              };
-              const symbolSize = parts[4].split(",");
-              const symbol = new PictureMarkerSymbol({
-                url: parts[3],
-                width: `${symbolSize[0]}px`,
-                height: `${symbolSize[1]}px`
+      }).then((i) => {
+        const o = [];
+        i.data.split(`
+`).forEach((r, n) => {
+          if (n) {
+            const a = r.split("	");
+            if (a.length >= 5) {
+              const l = a[0].split(","), p = new d({ x: parseFloat(l[1]), y: parseFloat(l[0]), spatialReference: t }), h = {
+                title: a[1],
+                content: a[2]
+              }, m = a[4].split(","), u = new J({
+                url: a[3],
+                width: `${m[0]}px`,
+                height: `${m[1]}px`
               });
-              graphics.push(new Graphic({
-                geometry,
-                symbol,
-                popupTemplate
+              o.push(new y({
+                geometry: p,
+                symbol: u,
+                popupTemplate: h
               }));
             }
           }
-        });
-        resolve(graphics);
+        }), s(o);
       });
     });
   }
 }
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __decorateClass = (decorators, target, key, kind) => {
-  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
-  for (var i = decorators.length - 1, decorator; i >= 0; i--)
-    if (decorator = decorators[i])
-      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
-  if (kind && result)
-    __defProp(target, key, result);
-  return result;
+var he = Object.defineProperty, me = Object.getOwnPropertyDescriptor, M = (c, e, t, s) => {
+  for (var i = s > 1 ? void 0 : s ? me(e, t) : e, o = c.length - 1, r; o >= 0; o--)
+    (r = c[o]) && (i = (s ? r(e, t, i) : r(i)) || i);
+  return s && i && he(e, t, i), i;
 };
-let Overview = class extends Widget {
-  constructor(params) {
-    super(params);
+let v = class extends oe {
+  constructor(c) {
+    super(c);
   }
   postInitialize() {
-    init(this.mainView, "center, interacting, scale", () => {
+    ie.watch(() => [this.mainView.center, this.mainView.interacting, this.mainView.scale], () => {
       this.onViewChange();
     });
   }
   render() {
-    setTimeout(() => {
-      if (this.expand.expanded) {
-        this.onViewChange();
-      }
-    }, 10);
-    return /* @__PURE__ */ tsx("div", {
-      id: `${this.id}_cont`,
-      style: "width:250px;height:150px;background:#fff"
-    });
+    return setTimeout(() => {
+      this.expand.expanded && this.onViewChange();
+    }, 10), /* @__PURE__ */ se("div", { id: `${this.id}_cont`, style: "width:250px;height:150px;background:#fff" });
   }
   onViewChange() {
-    if (this.expand.expanded) {
-      if (!this.overview && document.getElementById(`${this.id}_cont`)) {
-        this.createMap();
-        this.createExtentGraphic();
-      }
-      if (this.overview) {
-        this.overview.center = this.mainView.center;
-        this.overview.scale = this.mainView.scale * this.factor;
-        this.extentGraphic.geometry = this.mainView.extent;
-      }
-    }
+    this.expand.expanded && (!this.overview && document.getElementById(`${this.id}_cont`) && (this.createMap(), this.createExtentGraphic()), this.overview && (this.overview.center = this.mainView.center, this.overview.scale = this.mainView.scale * this.factor, this.extentGraphic.geometry = this.mainView.extent));
   }
   createMap() {
-    const map = new Map({
+    const c = new C({
       basemap: this.basemap
-    });
-    const tileInfo = TileInfo.create({
+    }), e = x.create({
       spatialReference: this.mainView.spatialReference,
       numLODs: this.scales.length,
       scales: this.scales
     });
-    this.overview = new MapView({
+    this.overview = new U({
       container: `${this.id}_cont`,
-      map,
+      map: c,
       scale: this.mainView.scale,
       center: this.mainView.center,
       spatialReference: this.mainView.spatialReference,
       constraints: {
-        rotationEnabled: false,
-        lods: tileInfo.lods
+        rotationEnabled: !1,
+        lods: e.lods
       },
       ui: {
         components: []
       }
-    });
-    this.overview.when(() => {
-      const stopEvtPropagation = (event) => {
-        event.stopPropagation();
+    }), this.overview.when(() => {
+      const t = (s) => {
+        s.stopPropagation();
       };
-      this.overview.on("mouse-wheel", stopEvtPropagation);
-      this.overview.on("double-click", stopEvtPropagation);
-      this.overview.on("double-click", ["Control"], stopEvtPropagation);
-      this.overview.on("drag", stopEvtPropagation);
-      this.overview.on("drag", ["Shift"], stopEvtPropagation);
-      this.overview.on("drag", ["Shift", "Control"], stopEvtPropagation);
-      this.overview.on("key-down", (event) => {
-        const prohibitedKeys = [
+      this.overview.on("mouse-wheel", t), this.overview.on("double-click", t), this.overview.on("double-click", ["Control"], t), this.overview.on("drag", t), this.overview.on("drag", ["Shift"], t), this.overview.on("drag", ["Shift", "Control"], t), this.overview.on("key-down", (s) => {
+        const i = [
           "+",
           "-",
           "Shift",
@@ -402,255 +349,218 @@ let Overview = class extends Widget {
           "ArrowDown",
           "ArrowRight",
           "ArrowLeft"
-        ];
-        const keyPressed = event.key;
-        if (prohibitedKeys.indexOf(keyPressed) !== -1) {
-          event.stopPropagation();
-        }
+        ], o = s.key;
+        i.indexOf(o) !== -1 && s.stopPropagation();
       });
     });
   }
   createExtentGraphic() {
-    const symbol = {
+    const c = {
       type: "simple-fill",
       color: [0, 0, 0, 0.5],
       outline: null
     };
-    this.extentGraphic = new Graphic({
-      symbol
-    });
-    this.overview.graphics.add(this.extentGraphic);
+    this.extentGraphic = new y({
+      symbol: c
+    }), this.overview.graphics.add(this.extentGraphic);
   }
 };
-__decorateClass([
-  property$1()
-], Overview.prototype, "expand", 2);
-Overview = __decorateClass([
-  subclass$1("esri.widgets.Overview")
-], Overview);
-class WidgetUtils {
-  static addOverview(basemap, view, scales, factor, display) {
-    const overview = new Overview({
-      basemap,
-      mainView: view,
-      scales,
-      factor
-    });
-    const overviewExpand = new Expand({
+M([
+  ee()
+], v.prototype, "expand", 2);
+v = M([
+  te("esri.widgets.Overview")
+], v);
+class g {
+  static addOverview(e, t, s, i, o) {
+    const r = new v({
+      basemap: e,
+      mainView: t,
+      scales: s,
+      factor: i
+    }), n = new f({
       expandIconClass: "esri-icon-maps",
-      view,
-      content: overview,
-      expanded: display === "expanded",
+      view: t,
+      content: r,
+      expanded: o === "expanded",
       mode: "floating",
-      autoCollapse: false,
+      autoCollapse: !1,
       group: "api"
     });
-    overview.expand = overviewExpand;
-    view.ui.add(overviewExpand, {
+    r.expand = n, t.ui.add(n, {
       position: "bottom-right"
     });
   }
-  static addLayerList(view, display) {
-    const layerList = new LayerList({
-      view
-    });
-    const layerListExpand = new Expand({
+  static addLayerList(e, t) {
+    const s = new Z({
+      view: e
+    }), i = new f({
       expandIconClass: "esri-icon-layers",
-      view,
-      content: layerList,
-      expanded: display === "expanded",
+      view: e,
+      content: s,
+      expanded: t === "expanded",
       mode: "floating",
-      autoCollapse: false,
+      autoCollapse: !1,
       group: "api"
     });
-    view.ui.add(layerListExpand, {
+    e.ui.add(i, {
       position: "top-right"
     });
   }
-  static addBasemapGallery(items, view) {
-    const basemapGallery = new BasemapGallery({
-      source: new LocalBasemapsSource({
-        basemaps: items
+  static addBasemapGallery(e, t) {
+    const s = new K({
+      source: new Q({
+        basemaps: e
       }),
-      view
+      view: t
     });
-    basemapGallery.viewModel.basemapEquals = (a, b) => a.id === b.id;
-    const basemapGalleryExpand = new Expand({
+    s.viewModel.basemapEquals = (o, r) => o.id === r.id;
+    const i = new f({
       expandIconClass: "esri-icon-basemap",
-      view,
-      content: basemapGallery,
+      view: t,
+      content: s,
       mode: "floating",
-      autoCollapse: true,
+      autoCollapse: !0,
       group: "api"
     });
-    view.ui.add(basemapGalleryExpand, {
+    t.ui.add(i, {
       position: "top-right"
     });
   }
-  static addCoordinates(view, display) {
-    const coords = new CoordinateConversion({
-      view
+  static addCoordinates(e, t) {
+    const s = new H({
+      view: e
     });
-    coords.visibleElements = {
-      expandButton: false
-    };
-    coords.when(() => {
-      const div = document.getElementsByClassName("esri-coordinate-conversion")[0];
-      div.style.width = "300px";
-      const basemap = coords.formats.find((f) => f.name === "basemap");
-      const mn95 = new Format({
+    s.visibleElements = {
+      expandButton: !1
+    }, s.when(() => {
+      const o = setInterval(() => {
+        const l = document.getElementsByClassName("esri-coordinate-conversion")[0];
+        l && (clearInterval(o), l.style.width = "300px");
+      }, 50), r = s.formats.find((l) => l.name === "basemap"), n = new Y({
         name: "mn95",
-        coordinateSegments: basemap.coordinateSegments,
-        spatialReference: basemap.spatialReference
+        coordinateSegments: r.coordinateSegments,
+        spatialReference: r.spatialReference
       });
-      coords.formats = coords.formats.filter((f) => f.name === "dd");
-      coords.formats.add(mn95, 0);
-      coords.conversions.removeAll();
-      const conversion = new Conversion({
-        format: mn95
+      s.formats = s.formats.filter((l) => l.name === "dd"), s.formats.add(n, 0), s.conversions.removeAll();
+      const a = new X({
+        format: n
       });
-      coords.conversions.add(conversion);
+      s.conversions.add(a);
     });
-    const coordsExpand = new Expand({
+    const i = new f({
       expandIconClass: "esri-icon-locate",
-      view,
-      content: coords,
-      expanded: display === "expanded",
+      view: e,
+      content: s,
+      expanded: t === "expanded",
       mode: "floating",
-      autoCollapse: false,
+      autoCollapse: !1,
       group: "api"
     });
-    view.ui.add(coordsExpand, {
+    e.ui.add(i, {
       position: "bottom-right"
     });
   }
 }
-class MapClass {
-  constructor(config) {
-    this.config = config;
-    this.layerUtils = new LayerUtils(config);
+class de {
+  constructor(e) {
+    this.config = e, this.layerUtils = new ce(e);
   }
-  init(emitter) {
-    const basemaps = this.layerUtils.getBasemaps(this.config.basemaps);
-    const map = new Map({
-      basemap: basemaps[0]
-    });
-    const spatialReference = new SpatialReference({
+  init(e) {
+    const t = this.layerUtils.getBasemaps(this.config.basemaps), s = new C({
+      basemap: t[0]
+    }), i = new T({
       wkid: this.config.spatialReference
-    });
-    const center = new Point({
+    }), o = new d({
       x: this.config.center[0],
       y: this.config.center[1],
-      spatialReference
-    });
-    const tileInfo = TileInfo.create({
-      spatialReference,
+      spatialReference: i
+    }), r = x.create({
+      spatialReference: i,
       numLODs: this.config.scales.length,
       scales: this.config.scales
-    });
-    const extent = new Extent({
+    }), n = new L({
       xmin: this.config.globalExtent.xmin,
       ymin: this.config.globalExtent.ymin,
       xmax: this.config.globalExtent.xmax,
       ymax: this.config.globalExtent.ymax,
-      spatialReference
+      spatialReference: i
     });
-    this.view = new MapView({
+    this.view = new U({
       container: this.config.container,
-      map,
+      map: s,
       scale: this.config.scale,
-      center,
-      spatialReference,
+      center: o,
+      spatialReference: i,
       constraints: {
-        rotationEnabled: false,
-        lods: tileInfo.lods,
+        rotationEnabled: !1,
+        lods: r.lods,
         minScale: this.config.minScale,
         maxScale: this.config.maxScale,
-        geometry: extent
+        geometry: n
       },
       popup: {
-        dockEnabled: true,
+        dockEnabled: !0,
         dockOptions: {
-          buttonEnabled: false,
-          breakpoint: false
+          buttonEnabled: !1,
+          breakpoint: !1
         },
         viewModel: {
-          includeDefaultActions: false
+          includeDefaultActions: !1
         }
       }
+    }), this.view.when(() => {
+      e.emit("map-created");
     });
-    this.view.when(() => {
-      emitter.emit("map-created");
-    });
-    const scaleBar = new ScaleBar({
+    const a = new I({
       view: this.view,
       unit: "metric"
     });
-    this.view.ui.add(scaleBar, {
+    if (this.view.ui.add(a, {
       position: "bottom-left"
-    });
-    if (this.config.layers) {
-      this.layerUtils.getFeatureLayers(this.config.layers).then((layers) => {
-        this.view.map.addMany(layers.reverse());
-      });
+    }), this.config.layers && this.layerUtils.getMapImageLayers(this.config.layers).then((l) => {
+      this.view.map.addMany(l.reverse());
+    }), t.length > 1 && g.addBasemapGallery(t, this.view), this.config.layerList && g.addLayerList(this.view, this.config.layerList), this.config.overviewDisplay && this.config.overviewBasemap) {
+      const l = this.layerUtils.getBasemaps([this.config.overviewBasemap])[0];
+      g.addOverview(l, this.view, this.config.scales, this.config.overviewFactor, this.config.overviewDisplay);
     }
-    if (basemaps.length > 1) {
-      WidgetUtils.addBasemapGallery(basemaps, this.view);
-    }
-    if (this.config.layerList) {
-      WidgetUtils.addLayerList(this.view, this.config.layerList);
-    }
-    if (this.config.overviewDisplay && this.config.overviewBasemap) {
-      const overviewBasemap = this.layerUtils.getBasemaps([this.config.overviewBasemap])[0];
-      WidgetUtils.addOverview(overviewBasemap, this.view, this.config.scales, this.config.overviewFactor, this.config.overviewDisplay);
-    }
-    if (this.config.showCoords) {
-      WidgetUtils.addCoordinates(this.view, this.config.showCoords);
-    }
-    this.view.on("click", (e) => {
-      if (e.native.ctrlKey) {
-        e.stopPropagation();
-        emitter.emit("ctrlClick", [e.mapPoint.x, e.mapPoint.y]);
-      }
+    this.config.showCoords && g.addCoordinates(this.view, this.config.showCoords), this.view.on("click", (l) => {
+      l.native.ctrlKey && (l.stopPropagation(), e.emit("ctrlClick", [l.mapPoint.x, l.mapPoint.y]));
     });
   }
-  center(position, scale) {
-    this.view.center = new Point({
-      x: position[0],
-      y: position[1],
+  center(e, t) {
+    this.view.center = new d({
+      x: e[0],
+      y: e[1],
       spatialReference: this.view.spatialReference
-    });
-    if (scale !== void 0) {
-      this.view.scale = scale;
-    }
+    }), t !== void 0 && (this.view.scale = t);
   }
-  centerOnObject(layer, ids, highlight) {
+  centerOnObject(e, t, s) {
     this.view.graphics.removeAll();
-    const queryConfig = this.config.vectorLayerQueries.filter((item) => item.layer === layer)[0];
-    if (!queryConfig) {
-      console.warn(`Invalid layer name: ${layer}`);
+    const i = this.config.vectorLayerQueries.filter((o) => o.layer === e)[0];
+    if (!i) {
+      console.warn(`Invalid layer name: ${e}`);
       return;
     }
-    this.layerUtils.queryLayer(queryConfig, ids).then((geometries) => {
-      if (!geometries.length) {
+    this.layerUtils.queryLayer(i, t).then((o) => {
+      if (!o.length) {
         console.warn("No object found with this query.");
         return;
       }
-      const globalExtent = this.getGlobalExtent(geometries, 1.5);
-      this.view.extent = globalExtent;
-      if (highlight) {
-        const symbols = {
+      const r = this.getGlobalExtent(o, 1.5);
+      if (this.view.extent = r, s) {
+        const n = {
           point: this.config.selectionPointSymbol,
           multipoint: this.config.selectionPointSymbol,
           polyline: this.config.selectionPolylineSymbol,
           polygon: this.config.selectionPolygonSymbol
         };
-        geometries.forEach((geom) => {
-          const gr = new Graphic({
-            geometry: geom,
-            symbol: symbols[geom.type]
+        o.forEach((a) => {
+          const l = new y({
+            geometry: a,
+            symbol: n[a.type]
           });
-          this.view.graphics.add(gr);
+          this.view.graphics.add(l);
         });
       }
     });
@@ -658,250 +568,227 @@ class MapClass {
   getCenterCoordinates() {
     return [this.view.center.x, this.view.center.y];
   }
-  showPopup(title, content) {
-    this.view.popup.open({
-      title,
-      content
+  showPopup(e, t) {
+    this.view.openPopup({
+      title: e,
+      content: t
     });
-    this.view.popup.collapsed = false;
   }
-  addMarker(params) {
-    const symbol = this.config.markerSymbol;
-    if (params !== void 0 && params.icon && params.size) {
-      symbol.url = params.icon;
-      symbol.width = `${params.size[0]}px`;
-      symbol.height = `${params.size[1]}px`;
-    }
-    const coords = params !== void 0 && params.position ? params.position : this.getCenterCoordinates();
-    const geometry = new Point({
-      x: coords[0],
-      y: coords[1],
+  addMarker(e) {
+    const t = this.config.markerSymbol;
+    e !== void 0 && e.icon && e.size && (t.url = e.icon, t.width = `${e.size[0]}px`, t.height = `${e.size[1]}px`);
+    const s = e !== void 0 && e.position ? e.position : this.getCenterCoordinates(), i = new d({
+      x: s[0],
+      y: s[1],
       spatialReference: this.view.spatialReference
+    }), o = new y({
+      geometry: i,
+      symbol: t
     });
-    const gr = new Graphic({
-      geometry,
-      symbol
-    });
-    this.view.graphics.add(gr);
+    this.view.graphics.add(o);
   }
-  addGpxLayer(name, url, zoom) {
-    if (!this.isValidLayerName(name)) {
-      return;
-    }
-    GpxUtils.gpxToFeatures(url, this.view.spatialReference).then((r) => {
-      const symbols = {
+  addGpxLayer(e, t, s) {
+    this.isValidLayerName(e) && ne.gpxToFeatures(t, this.view.spatialReference).then((i) => {
+      const o = {
         point: this.config.gpxPointSymbol,
         polyline: this.config.gpxPolylineSymbol,
         polygon: this.config.gpxPolygonSymbol
-      };
-      const graphics = [];
-      r.tracks.forEach((gr) => {
-        gr.symbol = symbols[gr.geometry.type];
-        graphics.push(gr);
-      });
-      r.waypoints.forEach((gr) => {
-        gr.symbol = symbols[gr.geometry.type];
-        graphics.push(gr);
-      });
-      this.addGraphicsLayer(graphics, name, zoom);
+      }, r = [];
+      i.tracks.forEach((n) => {
+        n.symbol = o[n.geometry.type], r.push(n);
+      }), i.waypoints.forEach((n) => {
+        n.symbol = o[n.geometry.type], r.push(n);
+      }), this.addGraphicsLayer(r, e, s);
     });
   }
-  addTextLayer(name, url, zoom) {
-    if (!this.isValidLayerName(name)) {
-      return;
-    }
-    TextUtils.txtToFeatures(url, this.view.spatialReference).then((features) => {
-      this.addGraphicsLayer(features, name, zoom);
+  addTextLayer(e, t, s) {
+    this.isValidLayerName(e) && pe.txtToFeatures(t, this.view.spatialReference).then((i) => {
+      this.addGraphicsLayer(i, e, s);
     });
   }
-  getGlobalExtent(geometries, expandFactor) {
-    const getExtent = (geom) => {
-      const extent = geom.extent;
-      if (extent && extent.width && extent.height) {
-        return extent.expand(expandFactor);
-      }
-      const pt = geom.type === "point" ? [geom.x, geom.y] : geom.points[0];
-      const size = 50;
-      return new Extent({
-        xmin: pt[0] - size,
-        ymin: pt[1] - size,
-        xmax: pt[0] + size,
-        ymax: pt[1] + size,
+  getGlobalExtent(e, t) {
+    const s = (o) => {
+      const r = o.extent;
+      if (r && r.width && r.height)
+        return r.expand(t);
+      const n = o.type === "point" ? [o.x, o.y] : o.points[0], a = 50;
+      return new L({
+        xmin: n[0] - a,
+        ymin: n[1] - a,
+        xmax: n[0] + a,
+        ymax: n[1] + a,
         spatialReference: this.view.spatialReference
       });
     };
-    let result;
-    geometries.forEach((geom) => {
-      if (result) {
-        result.union(getExtent(geom));
-      } else {
-        result = getExtent(geom.clone());
-      }
-    });
-    return result.expand(expandFactor);
+    let i;
+    return e.forEach((o) => {
+      i ? i.union(s(o)) : i = s(o.clone());
+    }), i.expand(t);
   }
-  isValidLayerName(name) {
-    if (this.view.map.layers.some((l) => l.title === name)) {
-      console.warn(`Map already contains a layer called '${name}'.`);
-      return false;
-    }
-    return true;
+  isValidLayerName(e) {
+    return this.view.map.layers.some((t) => t.title === e) ? (console.warn(`Map already contains a layer called '${e}'.`), !1) : !0;
   }
-  addGraphicsLayer(graphics, name, zoom) {
-    const layer = new GraphicsLayer({
-      title: name
+  addGraphicsLayer(e, t, s) {
+    const i = new k({
+      title: t
     });
-    this.view.map.add(layer);
-    layer.graphics.addMany(graphics);
-    if (zoom) {
-      const geometries = graphics.map((f) => f.geometry);
-      const extent = this.getGlobalExtent(geometries, 1.5);
-      this.view.extent = extent;
+    if (this.view.map.add(i), i.graphics.addMany(e), s) {
+      const o = e.map((n) => n.geometry), r = this.getGlobalExtent(o, 1.5);
+      this.view.extent = r;
     }
   }
 }
-class ConfigUtils {
-  static getConfig(params) {
-    return new Promise((resolve, reject) => {
-      esriRequest(params.configUrl, {
+class ye {
+  static getConfig(e) {
+    return new Promise((t, s) => {
+      b(e.configUrl, {
         responseType: "json"
-      }).then((r) => {
-        const config = r.data;
-        let overviewBasemap = void 0;
-        let overviewFactor = void 0;
-        let overviewDisplay;
-        if (params.miniMap !== void 0) {
-          overviewDisplay = params.miniMap;
-          const basemap = this.getBasemap(config.basemaps, config.overviewBasemap);
-          if (basemap) {
-            overviewBasemap = basemap;
-          }
-          overviewFactor = config.overviewFactor;
+      }).then((i) => {
+        const o = i.data;
+        let r, n, a;
+        if (e.miniMap !== void 0) {
+          a = e.miniMap;
+          const h = this.getBasemap(o.basemaps, o.overviewBasemap);
+          h && (r = h), n = o.overviewFactor;
         }
-        let layerList;
-        if (params.layerList !== void 0 && params.layers && params.layers.length) {
-          layerList = params.layerList;
-        }
-        let vectorServiceUrl = config.vectorServiceUrl;
-        if (vectorServiceUrl.substring(vectorServiceUrl.length - 1) === "/") {
-          vectorServiceUrl = vectorServiceUrl.substring(0, vectorServiceUrl.length - 1);
-        }
-        resolve({
-          apiUrl: config.apiUrl,
-          basemaps: this.getBasemaps(config, params),
-          center: params.center || config.center,
-          container: params.container,
-          globalExtent: config.globalExtent,
-          gpxPointSymbol: config.gpxPointSymbol,
-          gpxPolylineSymbol: config.gpxPolylineSymbol,
-          gpxPolygonSymbol: config.gpxPolygonSymbol,
-          layers: params.layers,
-          layerList,
-          markerSymbol: config.markerSymbol,
-          maxScale: config.maxScale,
-          minScale: config.minScale,
-          overviewBasemap,
-          overviewDisplay,
-          overviewFactor,
-          scale: params.scale || config.scale,
-          scales: config.scales,
-          selectionPointSymbol: config.selectionPointSymbol,
-          selectionPolylineSymbol: config.selectionPolylineSymbol,
-          selectionPolygonSymbol: config.selectionPolygonSymbol,
-          spatialReference: config.spatialReference,
-          showCoords: params.showCoords,
-          vectorLayerQueries: config.vectorLayerQueries,
-          vectorServiceUrl,
-          vectorServiceToken: config.vectorServiceToken
+        let l;
+        e.layerList !== void 0 && e.layers && e.layers.length && (l = e.layerList);
+        let p = o.vectorServiceUrl;
+        p.substring(p.length - 1) === "/" && (p = p.substring(0, p.length - 1)), t({
+          apiUrl: o.apiUrl,
+          basemaps: this.getBasemaps(o, e),
+          center: e.center || o.center,
+          container: e.container,
+          globalExtent: o.globalExtent,
+          gpxPointSymbol: o.gpxPointSymbol,
+          gpxPolylineSymbol: o.gpxPolylineSymbol,
+          gpxPolygonSymbol: o.gpxPolygonSymbol,
+          layers: e.layers,
+          layerList: l,
+          markerSymbol: o.markerSymbol,
+          maxScale: o.maxScale,
+          minScale: o.minScale,
+          overviewBasemap: r,
+          overviewDisplay: a,
+          overviewFactor: n,
+          scale: e.scale || o.scale,
+          scales: o.scales,
+          selectionPointSymbol: o.selectionPointSymbol,
+          selectionPolylineSymbol: o.selectionPolylineSymbol,
+          selectionPolygonSymbol: o.selectionPolygonSymbol,
+          spatialReference: o.spatialReference,
+          showCoords: e.showCoords,
+          vectorLayerQueries: o.vectorLayerQueries,
+          vectorServiceUrl: p,
+          vectorServiceToken: o.vectorServiceToken
         });
-      }).catch((error) => {
-        reject(error);
+      }).catch((i) => {
+        s(i);
       });
     });
   }
-  static getBasemaps(config, params) {
-    const result = [];
-    if (params.basemaps === void 0) {
-      const basemap = this.getBasemap(config.basemaps, config.defaultBasemap, config.copyright);
-      if (basemap) {
-        result.push(basemap);
-      }
-    } else {
-      params.basemaps.forEach((bm) => {
-        const basemap = this.getBasemap(config.basemaps, bm, config.copyright);
-        if (basemap) {
-          result.push(basemap);
-        }
+  static getBasemaps(e, t) {
+    const s = [];
+    if (t.basemaps === void 0) {
+      const i = this.getBasemap(e.basemaps, e.defaultBasemap, e.copyright);
+      i && s.push(i);
+    } else
+      t.basemaps.forEach((i) => {
+        const o = this.getBasemap(e.basemaps, i, e.copyright);
+        o && s.push(o);
       });
-    }
-    return result;
+    return s;
   }
-  static getBasemap(basemaps, name, copyright) {
-    const basemap = basemaps[name];
-    if (!basemap) {
-      console.warn(`Invalid basemap name: ${name}`);
-      return null;
-    }
-    return {
-      alias: basemap.alias,
-      copyright,
-      layerId: basemap.layerId,
-      name,
-      thumbnailUrl: basemap.thumbnailUrl,
-      type: basemap.type,
-      url: basemap.url,
-      urlTemplate: basemap.urlTemplate
-    };
+  static getBasemap(e, t, s) {
+    const i = e[t];
+    return i ? {
+      alias: i.alias,
+      copyright: s,
+      layerId: i.layerId,
+      name: t,
+      thumbnailUrl: i.thumbnailUrl,
+      type: i.type,
+      url: i.url,
+      urlTemplate: i.urlTemplate
+    } : (console.warn(`Invalid basemap name: ${t}`), null);
   }
 }
-class MapControl {
-  constructor(params) {
-    this.emitter = createNanoEvents();
-    ConfigUtils.getConfig(params).then((config) => {
-      let apiUrl = config.apiUrl;
-      if (apiUrl.charAt(apiUrl.length - 1) !== "/") {
-        apiUrl += "/";
-      }
-      esriConfig.assetsPath = `${apiUrl}@arcgis/core/assets`;
-      const css = document.createElement("link");
-      css.setAttribute("rel", "stylesheet");
-      css.setAttribute("type", "text/css");
-      css.setAttribute("href", `${apiUrl}@arcgis/core/assets/esri/themes/light/main.css`);
-      document.getElementsByTagName("head")[0].appendChild(css);
-      this.map = new MapClass(config);
-      this.map.init(this.emitter);
-    }).catch((error) => {
-      console.error(error);
+class Qe {
+  /**
+   * MapControl constructor
+   * @param params Map parameters
+   */
+  constructor(e) {
+    this.emitter = re(), ye.getConfig(e).then((t) => {
+      let s = t.apiUrl;
+      s.charAt(s.length - 1) !== "/" && (s += "/"), G.assetsPath = `${s}@arcgis/core/assets`;
+      const i = document.createElement("link");
+      i.setAttribute("rel", "stylesheet"), i.setAttribute("type", "text/css"), i.setAttribute("href", `${s}@arcgis/core/assets/esri/themes/light/main.css`), document.getElementsByTagName("head")[0].appendChild(i), this.map = new de(t), this.map.init(this.emitter);
+    }).catch((t) => {
+      console.error(t);
     });
   }
-  on(event, callback) {
-    return this.emitter.on(event, callback);
+  /**
+   * Listen on events
+   * @param event Event name
+   * @param callback Callback function
+   */
+  on(e, t) {
+    return this.emitter.on(e, t);
   }
-  center(position, scale) {
-    this.callMapFunction(() => this.map.center(position, scale));
+  /**
+   * Center the map on a new location
+   * @param position Coordinates of the center
+   * @param scale Scale
+   */
+  center(e, t) {
+    this.callMapFunction(() => this.map.center(e, t));
   }
-  centerOnObject(layer, ids, highlight) {
-    this.callMapFunction(() => this.map.centerOnObject(layer, ids, highlight));
+  /**
+   * Center the map on one or more objects
+   * @param layer Layer name
+   * @param ids Ids of the objects
+   * @param highlight Highlight the object or not
+   */
+  centerOnObject(e, t, s) {
+    this.callMapFunction(() => this.map.centerOnObject(e, t, s));
   }
-  addGpxLayer(name, url, zoom) {
-    this.callMapFunction(() => this.map.addGpxLayer(name, url, zoom));
+  /**
+   * Add a GPX layer on the map
+   * @param name Name of the layer visible in the layer list control
+   * @param url Url of the gpx file
+   */
+  addGpxLayer(e, t, s) {
+    this.callMapFunction(() => this.map.addGpxLayer(e, t, s));
   }
-  addTextLayer(name, url, zoom) {
-    this.callMapFunction(() => this.map.addTextLayer(name, url, zoom));
+  /**
+   * Add a layer from a text file on the map
+   * @param name Name of the layer visible in the layer list control
+   * @param url Url of the text file
+   */
+  addTextLayer(e, t, s) {
+    this.callMapFunction(() => this.map.addTextLayer(e, t, s));
   }
-  addMarker(params) {
-    this.callMapFunction(() => this.map.addMarker(params));
+  /**
+   * Add a marker on the map
+   * @param params Marker parameters
+   */
+  addMarker(e) {
+    this.callMapFunction(() => this.map.addMarker(e));
   }
-  showPopup(title, content) {
-    this.map.showPopup(title, content);
+  /**
+   * Display a popup on the map
+   * @param title Title of the popup
+   * @param content Content of the popup
+   */
+  showPopup(e, t) {
+    this.map.showPopup(e, t);
   }
-  callMapFunction(fct) {
-    if (this.map) {
-      fct();
-    } else {
-      this.emitter.on("map-created", () => fct());
-    }
+  callMapFunction(e) {
+    this.map ? e() : this.emitter.on("map-created", () => e());
   }
 }
-export { MapControl as default };
+export {
+  Qe as default
+};
 //# sourceMappingURL=main.js.map

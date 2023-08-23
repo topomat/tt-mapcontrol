@@ -1,4 +1,4 @@
-export declare type MarkerParams = {
+export type MarkerParams = {
     /** Coordinates of the marker */
     position?: number[];
     /** Size in pixel of the marker */

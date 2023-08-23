@@ -1,4 +1,4 @@
-export declare type MapControlParams = {
+export type MapControlParams = {
     /** Background layers. First item is displayed at startup. If there are multiple items, a selector control is added on the map. */
     basemaps?: string[];
     /** Map center coordinates */

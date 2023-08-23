@@ -1,10 +1,10 @@
-export declare type ExtentItem = {
+export type ExtentItem = {
     xmin: number;
     xmax: number;
     ymin: number;
     ymax: number;
 };
-export declare type BasemapItem = {
+export type BasemapItem = {
     alias: string;
     copyright?: string;
     layerId: string;
@@ -14,11 +14,11 @@ export declare type BasemapItem = {
     url?: string;
     urlTemplate?: string;
 };
-export declare type LayerQueryItem = {
+export type LayerQueryItem = {
     layer: string;
     field: string;
 };
-export declare type ConfigItem = {
+export type ConfigItem = {
     apiUrl: string;
     basemaps: BasemapItem[];
     center: number[];

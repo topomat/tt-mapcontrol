@@ -1,6 +1,6 @@
 import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import Graphic from '@arcgis/core/Graphic';
-declare type GpxContent = {
+type GpxContent = {
     waypoints: Graphic[];
     tracks: Graphic[];
 };
