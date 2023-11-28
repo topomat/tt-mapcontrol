@@ -1,21 +1,21 @@
-import G from "@arcgis/core/config";
+import B from "@arcgis/core/config";
 import L from "@arcgis/core/geometry/Extent";
 import d from "@arcgis/core/geometry/Point";
 import T from "@arcgis/core/geometry/SpatialReference";
-import y from "@arcgis/core/Graphic";
-import k from "@arcgis/core/layers/GraphicsLayer";
+import f from "@arcgis/core/Graphic";
+import G from "@arcgis/core/layers/GraphicsLayer";
 import x from "@arcgis/core/layers/support/TileInfo";
 import C from "@arcgis/core/Map";
-import U from "@arcgis/core/views/MapView";
-import I from "@arcgis/core/widgets/ScaleBar";
+import $ from "@arcgis/core/views/MapView";
+import k from "@arcgis/core/widgets/ScaleBar";
 import P from "@arcgis/core/geometry/Polyline";
 import * as E from "@arcgis/core/geometry/projection";
 import b from "@arcgis/core/request";
 import O from "@arcgis/core/Basemap";
-import R from "@arcgis/core/identity/IdentityManager";
-import D from "@arcgis/core/layers/FeatureLayer";
-import V from "@arcgis/core/layers/ImageryLayer";
-import F from "@arcgis/core/layers/MapImageLayer";
+import F from "@arcgis/core/identity/IdentityManager";
+import R from "@arcgis/core/layers/FeatureLayer";
+import D from "@arcgis/core/layers/ImageryLayer";
+import V from "@arcgis/core/layers/MapImageLayer";
 import A from "@arcgis/core/layers/TileLayer";
 import q from "@arcgis/core/layers/VectorTileLayer";
 import _ from "@arcgis/core/layers/WMTSLayer";
@@ -25,12 +25,12 @@ import z from "@arcgis/core/layers/BaseTileLayer";
 import * as W from "@arcgis/core/rest/query";
 import J from "@arcgis/core/symbols/PictureMarkerSymbol";
 import K from "@arcgis/core/widgets/BasemapGallery";
-import Q from "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource";
-import H from "@arcgis/core/widgets/CoordinateConversion";
-import X from "@arcgis/core/widgets/CoordinateConversion/support/Conversion";
-import Y from "@arcgis/core/widgets/CoordinateConversion/support/Format";
-import f from "@arcgis/core/widgets/Expand";
-import Z from "@arcgis/core/widgets/LayerList";
+import H from "@arcgis/core/widgets/BasemapGallery/support/LocalBasemapsSource";
+import X from "@arcgis/core/widgets/CoordinateConversion";
+import Y from "@arcgis/core/widgets/CoordinateConversion/support/Conversion";
+import Z from "@arcgis/core/widgets/CoordinateConversion/support/Format";
+import y from "@arcgis/core/widgets/Expand";
+import Q from "@arcgis/core/widgets/LayerList";
 import { property as ee, subclass as te } from "@arcgis/core/core/accessorSupport/decorators";
 import * as ie from "@arcgis/core/core/reactiveUtils";
 import { tsx as se } from "@arcgis/core/widgets/support/widget";
@@ -70,8 +70,8 @@ class ne {
             n.querySelectorAll("trkseg").forEach((h) => {
               const m = [];
               h.querySelectorAll("trkpt").forEach((S) => {
-                const B = new d({ latitude: S.attributes.lat.value, longitude: S.attributes.lon.value });
-                m.push(B);
+                const M = new d({ latitude: S.attributes.lat.value, longitude: S.attributes.lon.value });
+                m.push(M);
               }), l.addPath(m);
             });
             const p = this.getGraphic(l, n, `track ${a + 1}`, t);
@@ -100,13 +100,13 @@ class ne {
       title: r,
       content: a
     };
-    return new y({
+    return new f({
       geometry: E.project(e, i),
       popupTemplate: l
     });
   }
 }
-var ae = Object.defineProperty, le = Object.getOwnPropertyDescriptor, $ = (c, e, t, s) => {
+var ae = Object.defineProperty, le = Object.getOwnPropertyDescriptor, U = (c, e, t, s) => {
   for (var i = s > 1 ? void 0 : s ? le(e, t) : e, o = c.length - 1, r; o >= 0; o--)
     (r = c[o]) && (i = (s ? r(e, t, i) : r(i)) || i);
   return s && i && ae(e, t, i), i;
@@ -131,17 +131,17 @@ let w = class extends z {
     return this.urlTemplate.replace("{level}", c.toString()).replace("{col}", t.toString()).replace("{row}", e.toString());
   }
 };
-$([
+U([
   j()
 ], w.prototype, "urlTemplate", 2);
-w = $([
+w = U([
   N("esri.layers.SwissTileLayer")
 ], w);
 class ce {
   constructor(e) {
     this.serviceDescription = null, this.config = e, this.serviceUrl = e.vectorServiceUrl;
     const t = e.vectorServiceToken;
-    R.registerToken({
+    F.registerToken({
       token: t,
       server: `${this.serviceUrl.split("/rest/services")[0]}/rest/services`
     });
@@ -152,7 +152,7 @@ class ce {
         const i = [];
         s.layers.forEach((o) => {
           if (e.includes(o.name)) {
-            const r = new D({
+            const r = new R({
               url: `${this.serviceUrl}/${o.id}`,
               title: o.name
             });
@@ -169,7 +169,7 @@ class ce {
     const t = [];
     return (await this.getServiceDescription()).layers.forEach((i) => {
       if (e.includes(i.name)) {
-        const o = new F({
+        const o = new V({
           title: i.name,
           url: this.serviceUrl,
           listMode: "hide-children",
@@ -187,16 +187,22 @@ class ce {
   queryLayer(e, t) {
     return new Promise((s) => {
       this.getServiceDescription().then((i) => {
-        const o = i.layers.filter((r) => r.name === e.layer)[0];
+        const o = i.layers.filter((a) => a.name === e.layer)[0];
         if (!o) {
           console.warn(`Invalid layer name in config file: ${e.layer}`), s([]);
           return;
         }
-        W.executeQueryJSON(`${this.serviceUrl}/${o.id}`, {
-          where: `${e.field} in ('${t.join("','")}')`,
+        const r = o.fields.filter((a) => a.name === e.field)[0];
+        if (!r) {
+          console.warn(`Invalid field name in config file: ${e.field}`), s([]);
+          return;
+        }
+        let n;
+        this.isNumericField(r.type) ? n = `${e.field} in (${t.join(",")})` : n = `${e.field} in ('${t.join("','")}')`, W.executeQueryJSON(`${this.serviceUrl}/${o.id}`, {
+          where: n,
           returnGeometry: !0
-        }).then((r) => {
-          s(r.features.map((n) => n.geometry));
+        }).then((a) => {
+          s(a.features.map((l) => l.geometry));
         });
       });
     });
@@ -214,7 +220,7 @@ class ce {
   }
   getServiceDescription() {
     return new Promise((e) => {
-      this.serviceDescription === null ? b(this.serviceUrl, {
+      this.serviceDescription === null ? b(`${this.serviceUrl}/layers`, {
         query: {
           f: "json"
         },
@@ -246,7 +252,7 @@ class ce {
           copyright: e.copyright
         });
       case "imageservice":
-        return new V({
+        return new D({
           url: e.url,
           copyright: e.copyright
         });
@@ -257,6 +263,9 @@ class ce {
       default:
         return console.warn(`Unsupported basemap type: ${e.type}`), null;
     }
+  }
+  isNumericField(e) {
+    return e === "esriFieldTypeSmallInteger" || e === "esriFieldTypeInteger" || e === "esriFieldTypeSingle" || e === "esriFieldTypeDouble";
   }
 }
 class pe {
@@ -279,7 +288,7 @@ class pe {
                 width: `${m[0]}px`,
                 height: `${m[1]}px`
               });
-              o.push(new y({
+              o.push(new f({
                 geometry: p,
                 symbol: u,
                 popupTemplate: h
@@ -291,7 +300,7 @@ class pe {
     });
   }
 }
-var he = Object.defineProperty, me = Object.getOwnPropertyDescriptor, M = (c, e, t, s) => {
+var he = Object.defineProperty, me = Object.getOwnPropertyDescriptor, I = (c, e, t, s) => {
   for (var i = s > 1 ? void 0 : s ? me(e, t) : e, o = c.length - 1, r; o >= 0; o--)
     (r = c[o]) && (i = (s ? r(e, t, i) : r(i)) || i);
   return s && i && he(e, t, i), i;
@@ -321,7 +330,7 @@ let v = class extends oe {
       numLODs: this.scales.length,
       scales: this.scales
     });
-    this.overview = new U({
+    this.overview = new $({
       container: `${this.id}_cont`,
       map: c,
       scale: this.mainView.scale,
@@ -360,15 +369,15 @@ let v = class extends oe {
       color: [0, 0, 0, 0.5],
       outline: null
     };
-    this.extentGraphic = new y({
+    this.extentGraphic = new f({
       symbol: c
     }), this.overview.graphics.add(this.extentGraphic);
   }
 };
-M([
+I([
   ee()
 ], v.prototype, "expand", 2);
-v = M([
+v = I([
   te("esri.widgets.Overview")
 ], v);
 class g {
@@ -378,7 +387,7 @@ class g {
       mainView: t,
       scales: s,
       factor: i
-    }), n = new f({
+    }), n = new y({
       expandIconClass: "esri-icon-maps",
       view: t,
       content: r,
@@ -392,9 +401,9 @@ class g {
     });
   }
   static addLayerList(e, t) {
-    const s = new Z({
+    const s = new Q({
       view: e
-    }), i = new f({
+    }), i = new y({
       expandIconClass: "esri-icon-layers",
       view: e,
       content: s,
@@ -409,13 +418,13 @@ class g {
   }
   static addBasemapGallery(e, t) {
     const s = new K({
-      source: new Q({
+      source: new H({
         basemaps: e
       }),
       view: t
     });
     s.viewModel.basemapEquals = (o, r) => o.id === r.id;
-    const i = new f({
+    const i = new y({
       expandIconClass: "esri-icon-basemap",
       view: t,
       content: s,
@@ -428,7 +437,7 @@ class g {
     });
   }
   static addCoordinates(e, t) {
-    const s = new H({
+    const s = new X({
       view: e
     });
     s.visibleElements = {
@@ -437,18 +446,18 @@ class g {
       const o = setInterval(() => {
         const l = document.getElementsByClassName("esri-coordinate-conversion")[0];
         l && (clearInterval(o), l.style.width = "300px");
-      }, 50), r = s.formats.find((l) => l.name === "basemap"), n = new Y({
+      }, 50), r = s.formats.find((l) => l.name === "basemap"), n = new Z({
         name: "mn95",
         coordinateSegments: r.coordinateSegments,
         spatialReference: r.spatialReference
       });
       s.formats = s.formats.filter((l) => l.name === "dd"), s.formats.add(n, 0), s.conversions.removeAll();
-      const a = new X({
+      const a = new Y({
         format: n
       });
       s.conversions.add(a);
     });
-    const i = new f({
+    const i = new y({
       expandIconClass: "esri-icon-locate",
       view: e,
       content: s,
@@ -486,7 +495,7 @@ class de {
       ymax: this.config.globalExtent.ymax,
       spatialReference: i
     });
-    this.view = new U({
+    this.view = new $({
       container: this.config.container,
       map: s,
       scale: this.config.scale,
@@ -512,7 +521,7 @@ class de {
     }), this.view.when(() => {
       e.emit("map-created");
     });
-    const a = new I({
+    const a = new k({
       view: this.view,
       unit: "metric"
     });
@@ -556,7 +565,7 @@ class de {
           polygon: this.config.selectionPolygonSymbol
         };
         o.forEach((a) => {
-          const l = new y({
+          const l = new f({
             geometry: a,
             symbol: n[a.type]
           });
@@ -581,7 +590,7 @@ class de {
       x: s[0],
       y: s[1],
       spatialReference: this.view.spatialReference
-    }), o = new y({
+    }), o = new f({
       geometry: i,
       symbol: t
     });
@@ -629,7 +638,7 @@ class de {
     return this.view.map.layers.some((t) => t.title === e) ? (console.warn(`Map already contains a layer called '${e}'.`), !1) : !0;
   }
   addGraphicsLayer(e, t, s) {
-    const i = new k({
+    const i = new G({
       title: t
     });
     if (this.view.map.add(i), i.graphics.addMany(e), s) {
@@ -638,7 +647,7 @@ class de {
     }
   }
 }
-class ye {
+class fe {
   static getConfig(e) {
     return new Promise((t, s) => {
       b(e.configUrl, {
@@ -713,15 +722,15 @@ class ye {
     } : (console.warn(`Invalid basemap name: ${t}`), null);
   }
 }
-class Qe {
+class He {
   /**
    * MapControl constructor
    * @param params Map parameters
    */
   constructor(e) {
-    this.emitter = re(), ye.getConfig(e).then((t) => {
+    this.emitter = re(), fe.getConfig(e).then((t) => {
       let s = t.apiUrl;
-      s.charAt(s.length - 1) !== "/" && (s += "/"), G.assetsPath = `${s}@arcgis/core/assets`;
+      s.charAt(s.length - 1) !== "/" && (s += "/"), B.assetsPath = `${s}@arcgis/core/assets`;
       const i = document.createElement("link");
       i.setAttribute("rel", "stylesheet"), i.setAttribute("type", "text/css"), i.setAttribute("href", `${s}@arcgis/core/assets/esri/themes/light/main.css`), document.getElementsByTagName("head")[0].appendChild(i), this.map = new de(t), this.map.init(this.emitter);
     }).catch((t) => {
@@ -789,6 +798,6 @@ class Qe {
   }
 }
 export {
-  Qe as default
+  He as default
 };
 //# sourceMappingURL=main.js.map

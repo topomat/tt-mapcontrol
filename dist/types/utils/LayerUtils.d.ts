@@ -14,4 +14,5 @@ export default class LayerUtils {
     getBasemaps(basemapItems: BasemapItem[]): Basemap[];
     private getServiceDescription;
     private getLayer;
+    private isNumericField;
 }
